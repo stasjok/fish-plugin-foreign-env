@@ -22,16 +22,16 @@
 
 
 function fenv -d "Run bash scripts and import variables modified by them"
-  if test (count $argv) -gt 0
-    if test -z (echo $argv | sed 's/[ \t]//g')
-      return 0
+    if count $argv >/dev/null
+        if string trim $argv | string length -q
+            fenv.main $argv
+            return $status
+        else
+            return 0
+        end
+    else
+        echo (set_color red)'error:' (set_color normal)'parameter missing'
+        echo (set_color cyan)'usage:' (set_color normal)'fenv <bash command>'
+        return 23 # EINVAL
     end
-
-    fenv.main $argv
-    return $status
-  else
-    echo (set_color red)'error:' (set_color normal)'parameter missing'
-    echo (set_color cyan)'usage:' (set_color normal)'fenv <bash command>'
-    return 23  # EINVAL
-  end
 end
